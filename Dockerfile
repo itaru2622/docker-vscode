@@ -1,6 +1,11 @@
 #cf. https://github.com/cmiles74/docker-vscode/blob/master/Dockerfile
 
-From debian:bullseye
+ARG base=debian:bullseye
+FROM ${base}
+ARG base
+
+# use bash instead of sh in RUN command
+SHELL ["/bin/bash", "-c"]
 
 RUN apt update
 RUN apt install -y curl apt-transport-https gnupg2
@@ -8,7 +13,17 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - ;\
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list;
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt update
-RUN apt install -y code git make python3 python3-pip bash-completion jq nodejs \
+
+# install python3-pip and dependencies only when base image is not based on python
+#   https://stackoverflow.com/questions/37057468/conditional-env-in-dockerfile
+#   https://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
+
+RUN if [[ ${base} != python* ]] ; \
+    then \
+        apt install -y python3-pip; \
+    fi
+
+RUN apt install -y code git make bash-completion jq nodejs \
                    task-japanese locales-all locales ibus-mozc sudo dante-client connect-proxy vim
 
 ARG uid=1000

@@ -28,6 +28,9 @@ env:
   TAG_LATEST: bullseye
   UID: 1000
   UNAME: vscode
+  #BASE_IMG: debian:bullseye
+  BASE_IMG: python:3.10-bullseye
+
 
 jobs:
   build:
@@ -76,5 +79,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
+            base=${{ env.BASE_IMG }}
             uid=${{ env.UID }}
             uname=${{ env.UNAME }}
