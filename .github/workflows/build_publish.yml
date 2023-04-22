@@ -29,7 +29,7 @@ env:
   UID: 1000
   UNAME: vscode
   #BASE_IMG: debian:bullseye
-  BASE_IMG: python:3.10-bullseye
+  BASE_IMG: python:3.11-bullseye
 
 
 jobs:
