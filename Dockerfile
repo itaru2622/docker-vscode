@@ -39,7 +39,7 @@ RUN mkdir -p ${workdir} ; \
     chown -R ${uname} /home/${uname} ${workdir}; \
     echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen; locale-gen; update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
-RUN pip3 install  fastapi uvicorn[standard] q pytest pytest-cov httpx yq
+RUN pip3 install  fastapi uvicorn[standard] q yq classy-fastapi pytest pytest-cov httpx yq
 
 # converter between JsonSchema <=> OpenAPI
 RUN npm install -g @openapi-contrib/json-schema-to-openapi-schema @openapi-contrib/openapi-schema-to-json-schema
