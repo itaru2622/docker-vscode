@@ -39,14 +39,15 @@ RUN mkdir -p ${workdir} ; \
     chown -R ${uname} /home/${uname} ${workdir}; \
     echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen; locale-gen; update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
-RUN pip3 install  fastapi uvicorn[standard] classy-fastapi yq   q pytest pytest-cov httpx
+RUN pip3 install --upgrade pip; \
+    pip3 install fastapi uvicorn[standard] classy-fastapi yq   q pytest pytest-cov httpx
 
 # converter between JsonSchema <=> OpenAPI
-RUN npm install -g @openapi-contrib/json-schema-to-openapi-schema @openapi-contrib/openapi-schema-to-json-schema
+RUN npm install -g typescript \
+                   @openapi-contrib/json-schema-to-openapi-schema @openapi-contrib/openapi-schema-to-json-schema
 
 # python class generator from JsonSchema
 RUN pip3 install  git+https://github.com/koxudaxi/datamodel-code-generator.git
-
 
 # UML generator from python class (pyreverse@pylint), with re-formater mmdc@mermaid (text2img @ github support), and graphviz
 RUN pip3 install   pylint; \
@@ -67,10 +68,15 @@ ENV PATH ${PATH}:/usr/lib/node_modules/.bin:./node_modules/.bin:/usr/lib/node_mo
 USER ${uname}
 
 # install vscode plugin...
-RUN code --install-extension  ms-python.python; \
-    code --install-extension  MS-CEINTL.vscode-language-pack-ja; \
-    code --install-extension  ms-vscode-remote.vscode-remote-extensionpack; \
-    code --install-extension  waderyan.nodejs-extension-pack;
+RUN code --install-extension      ms-python.python; \
+    code --install-extension      MS-CEINTL.vscode-language-pack-ja; \
+    code --install-extension      ms-vscode-remote.vscode-remote-extensionpack; \
+    sudo code --install-extension ms-vscode.js-debug    --no-sandbox --user-data-dir;
+
+# deprecated
+#   code --install-extension  waderyan.nodejs-extension-pack;
+# alternative
+#   code --install-extension  nodesource.vscode-for-node-js-development-pack; # this also depends deprecated packages.
 
 VOLUME  ${workdir} /home/${uname}/.ssh /home/${uname}/.vscode
 WORKDIR ${workdir}
