@@ -24,7 +24,8 @@ RUN if [[ ${base} != python* ]] ; \
     fi
 
 RUN apt install -y code git make bash-completion jq nodejs \
-                   task-japanese locales-all locales ibus-mozc sudo dante-client connect-proxy vim iputils-ping traceroute net-tools tzdata
+                   task-japanese locales-all locales ibus-mozc sudo dante-client connect-proxy vim iputils-ping traceroute net-tools tzdata \
+                   parallel
 
 ARG uid=1000
 ARG uname=vscode
@@ -42,6 +43,10 @@ RUN mkdir -p ${workdir} ; \
 
 RUN pip3 install --upgrade pip; \
     pip3 install fastapi uvicorn[standard] classy-fastapi yq pandas openpyxl numpy sympy   q pytest pytest-cov httpx
+
+RUN pip3 install sympy \
+                 matplotlib \
+                 pymongo jupyterlab 
 
 # converter between JsonSchema <=> OpenAPI
 RUN npm install -g typescript \
