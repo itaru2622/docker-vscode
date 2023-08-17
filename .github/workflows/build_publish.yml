@@ -25,12 +25,14 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  TAG_LATEST: bullseye
+  # vars.DOCKER_EXTPORT_TAG: github repository variables.
+  TAG_LATEST: ${{ vars.DOCKER_EXPORT_TAG}}
   UID: 1000
   UNAME: vscode
   #BASE_IMG: debian:bullseye
-  BASE_IMG: python:3.11-bullseye
-
+  #BASE_IMG: python:3.11-bullseye
+  # vars.DOCKER_BASE_IMG: github repository variables.
+  BASE_IMG: ${{ vars.DOCKER_BASE_IMG}}
 
 jobs:
   build:

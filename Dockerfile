@@ -1,6 +1,6 @@
 #cf. https://github.com/cmiles74/docker-vscode/blob/master/Dockerfile
 
-ARG base=debian:bullseye
+ARG base=debian:bookworm
 FROM ${base}
 ARG base
 
@@ -8,16 +8,13 @@ ARG base
 SHELL ["/bin/bash", "-c"]
 
 RUN apt update
-RUN apt install -y curl apt-transport-https gnupg2
+#RUN apt install -y curl apt-transport-https gnupg2
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - ;\
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list;
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt update
 
 # install python3-pip and dependencies only when base image is not based on python
-#   https://stackoverflow.com/questions/37057468/conditional-env-in-dockerfile
-#   https://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
-
 RUN if [[ ${base} != python* ]] ; \
     then \
         apt install -y python3-pip; \
@@ -32,13 +29,13 @@ ARG uname=vscode
 ARG workdir=/work
 RUN mkdir -p ${workdir} ; \
     addgroup --system --gid ${uid} ${uname} ; \
-    adduser  --system --gid ${uid} --uid ${uid} --shell /bin/bash ${uname} ; \
+    adduser  --system --gid ${uid} --uid ${uid} --shell /bin/bash --home /home/${uname} ${uname} ; \
     echo "${uname}:${uname}" | chpasswd; \
     (cd /etc/skel; find . -type f -print | tar cf - -T - | tar xvf - -C/home/${uname} ) ; \
     echo "${uname} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/local-user; \
     mkdir -p /home/${uname}/.ssh ;\
     echo "set mouse-=a" > /home/${uname}/.vimrc; \
-    chown -R ${uname} /home/${uname} ${workdir}; \
+    chown -R ${uname}:${uname} /home/${uname} ${workdir}; \
     echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen; locale-gen; update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
 RUN pip3 install --upgrade pip; \
@@ -55,34 +52,25 @@ RUN npm install -g typescript \
 # python class generator from JsonSchema
 RUN pip3 install  git+https://github.com/koxudaxi/datamodel-code-generator.git
 
-# UML generator from python class (pyreverse@pylint), with re-formater mmdc@mermaid (text2img @ github support), and graphviz
+# UML generator from python class (pyreverse@pylint), with re-formater mermaid (text2img @ github support), and graphviz
 RUN pip3 install   pylint; \
     apt install -y graphviz; \
-    npm install -g mermaid.cli
+    npm install -g @mermaid-js/mermaid-cli
 
-ENV PATH ${PATH}:/usr/lib/node_modules/.bin:./node_modules/.bin:/usr/lib/node_modules/@openapi-contrib/json-schema-to-openapi-schema/bin
+ENV PATH ${PATH}:./node_modules/.bin:/usr/lib/node_modules/.bin:/usr/lib/node_modules/@openapi-contrib/json-schema-to-openapi-schema/bin:
 
 # install nlp things and etc.
 #RUN pip3 install fastapi uvicorn[standard] q pytest pytest-cov httpx pandas spacy; \
 #    python3 -m spacy download    en_core_web_lg;
-#
-# install heideltime, resolving MM-DD to YYYY-MM-DD
-#RUN apt install -y openjdk-11-jre ; \
-#   pip3 install git+https://github.com/JMendes1995/py_heideltime.git; \
-#   chmod a+rx /usr/local/lib/python3.9/dist-packages/py_heideltime/Heideltime/TreeTaggerLinux/bin/*
 
 USER ${uname}
+#ENV HOME /home/${uname}
 
 # install vscode plugin...
 RUN code --install-extension      ms-python.python; \
     code --install-extension      MS-CEINTL.vscode-language-pack-ja; \
     code --install-extension      ms-vscode-remote.vscode-remote-extensionpack; \
     sudo code --install-extension ms-vscode.js-debug    --no-sandbox --user-data-dir;
-
-# deprecated
-#   code --install-extension  waderyan.nodejs-extension-pack;
-# alternative
-#   code --install-extension  nodesource.vscode-for-node-js-development-pack; # this also depends deprecated packages.
 
 VOLUME  ${workdir} /home/${uname}/.ssh /home/${uname}/.vscode
 WORKDIR ${workdir}
