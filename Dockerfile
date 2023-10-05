@@ -1,6 +1,6 @@
 #cf. https://github.com/cmiles74/docker-vscode/blob/master/Dockerfile
 
-ARG base=debian:bookworm
+ARG base=python:3-bookworm
 FROM ${base}
 ARG base
 
@@ -39,7 +39,7 @@ RUN mkdir -p ${workdir} ; \
     echo "ja_JP.UTF-8 UTF-8" > /etc/locale.gen; locale-gen; update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
 RUN pip3 install --upgrade pip; \
-    pip3 install fastapi[standard] uvicorn[standard]      yq pandas openpyxl numpy sympy   q pytest pytest-cov httpx
+    pip3 install fastapi[standard] uvicorn watchfiles     yq pandas openpyxl numpy sympy   q pytest pytest-cov httpx
 
 RUN pip3 install sympy \
                  matplotlib \
