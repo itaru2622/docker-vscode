@@ -33,6 +33,7 @@ env:
   #BASE_IMG: python:3.11-bullseye
   # vars.DOCKER_BASE_IMG: github repository variables.
   BASE_IMG: ${{ vars.DOCKER_BASE_IMG}}
+  VER_NODE: ${{ vars.VER_NODE }}
 
 jobs:
   build:
@@ -84,3 +85,4 @@ jobs:
             base=${{ env.BASE_IMG }}
             uid=${{ env.UID }}
             uname=${{ env.UNAME }}
+            ver_node=${{ env.VER_NODE }}
