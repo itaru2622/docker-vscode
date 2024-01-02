@@ -23,8 +23,8 @@ RUN if [[ ${base} != python* ]] ; \
 
 RUN apt install -y code git make bash-completion tzdata task-japanese locales-all locales ibus-mozc sudo vim \
                    dante-client connect-proxy jq iputils-ping traceroute net-tools parallel \
-                   nodejs \
                    chromium; \
+    apt install -y nodejs -t nodistro; \
     npm install -g yarn
 
 ARG uid=1000
