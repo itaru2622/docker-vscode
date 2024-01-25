@@ -25,7 +25,7 @@ RUN apt install -y code git make bash-completion tzdata task-japanese locales-al
                    dante-client connect-proxy jq iputils-ping traceroute net-tools parallel \
                    chromium; \
     apt install -y nodejs -t nodistro; \
-    npm install -g yarn
+    npm install -g yarn pnpm ts-node
 
 ARG uid=1000
 ARG uname=vscode
