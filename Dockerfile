@@ -70,6 +70,7 @@ USER ${uname}
 RUN code --install-extension      ms-python.python; \
     code --install-extension      MS-CEINTL.vscode-language-pack-ja; \
     code --install-extension      ms-vscode-remote.vscode-remote-extensionpack; \
+    code --install-extension      github.copilot; \
     sudo code --install-extension ms-vscode.js-debug    --no-sandbox --user-data-dir;
 
 VOLUME  ${workdir} /home/${uname}/.ssh /home/${uname}/.vscode
