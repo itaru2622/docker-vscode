@@ -11,8 +11,9 @@ SHELL ["/bin/bash", "-c"]
 ARG VER_NODE=18
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - ;\
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list; \
-    curl https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | apt-key add - ; \
-    echo "deb https://deb.nodesource.com/node_${VER_NODE}.x nodistro main" > /etc/apt/sources.list.d/nodesource.list ; \
+    curl -fsSL https://deb.nodesource.com/setup_${VER_NODE}.x | bash - ; \
+    curl  https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - ; \
+    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list ; \
     apt update
 
 # install python3-pip and dependencies only when base image is not based on python
@@ -21,11 +22,11 @@ RUN if [[ ${base} != python* ]] ; \
         apt install -y python3-pip; \
     fi
 
+ARG chrome=google-chrome-stable
 RUN apt install -y code git make bash-completion tzdata task-japanese locales-all locales ibus-mozc sudo vim \
                    dante-client connect-proxy jq iputils-ping traceroute net-tools parallel \
-                   chromium; \
-    apt install -y nodejs -t nodistro; \
-    npm install -g yarn pnpm ts-node
+                   nodejs upower ${chrome}; \
+    npm install -g yarn pnpm typescript ts-node
 
 ARG uid=1000
 ARG uname=vscode
@@ -63,8 +64,14 @@ RUN pip3 install --upgrade pip; \
 #RUN pip3 install fastapi uvicorn[standard] q pytest pytest-cov httpx pandas spacy; \
 #    python3 -m spacy download    en_core_web_lg;
 
+# dbus handling
+#    update config file to avoid overwrite PIDFILE for host
+RUN sed -i '/<pidfile>/c <pidfile>/tmp/dbus-pid-container</pidfile>' /usr/share/dbus-1/system.conf
+#    config env cf. https://stackoverflow.com/questions/42898262/run-dbus-daemon-inside-docker-container
+ENV DBUS_SESSION_BUS_ADDRESS="unix:path=/var/run/dbus/system_bus_socket"
+#    to run dbus: sudo -E /etc/init.d/dbus start
+
 USER ${uname}
-#ENV HOME /home/${uname}
 
 ## install vscode plugin...
 RUN code --install-extension      ms-python.python; \
