@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-c"]
 
 #RUN apt install -y curl apt-transport-https gnupg2
 ARG VER_NODE=18
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - ;\
+RUN curl https://packages.microsoft.com/keys/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.asc; \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list; \
     curl -fsSL https://deb.nodesource.com/setup_${VER_NODE}.x | bash - ; \
     curl  https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - ; \
