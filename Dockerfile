@@ -8,10 +8,10 @@ ARG base
 SHELL ["/bin/bash", "-c"]
 
 #RUN apt install -y curl apt-transport-https gnupg2
-ARG VER_NODE=18
+ARG ver_node=18
 RUN curl https://packages.microsoft.com/keys/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.asc; \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list; \
-    curl -fsSL https://deb.nodesource.com/setup_${VER_NODE}.x | bash - ; \
+    curl -fsSL https://deb.nodesource.com/setup_${ver_node}.x | bash - ; \
     curl  https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - ; \
     echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list ; \
     apt update
