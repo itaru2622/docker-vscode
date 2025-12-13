@@ -8,7 +8,7 @@ ARG base
 SHELL ["/bin/bash", "-c"]
 
 #RUN apt install -y curl apt-transport-https gnupg2
-ARG ver_node=18
+ARG ver_node=22
 RUN curl -L https://packages.microsoft.com/keys/microsoft.asc > /etc/apt/trusted.gpg.d/microsoft.asc; \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list; \
     curl -fsSL https://deb.nodesource.com/setup_${ver_node}.x | bash - ; \
