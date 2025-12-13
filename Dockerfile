@@ -1,6 +1,6 @@
 #cf. https://github.com/cmiles74/docker-vscode/blob/master/Dockerfile
 
-ARG base=python:3-bookworm
+ARG base=python:3.13-trixie
 FROM ${base}
 ARG base
 
@@ -24,7 +24,7 @@ RUN if [[ ${base} != python* ]] ; \
 
 ARG chrome=google-chrome-stable
 RUN apt install -y code git make bash-completion tzdata task-japanese locales-all locales ibus-mozc sudo vim \
-                   dante-client connect-proxy jq iputils-ping traceroute net-tools parallel \
+                   connect-proxy jq iputils-ping traceroute net-tools parallel \
                    nodejs upower ${chrome}; \
     npm install -g yarn pnpm typescript ts-node
 
